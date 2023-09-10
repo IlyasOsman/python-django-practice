@@ -13,7 +13,6 @@ from .serializers import (
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from PIL import Image 
-import os
 
 class UserLoginView(TokenObtainPairView):
     username_field = 'email'
@@ -27,6 +26,12 @@ class LeadershipUserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = LeadershipUserSerializer
 
 class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserListSerializer
+    permission_classes = [IsAuthenticated]
+    
+
+class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
@@ -60,15 +65,6 @@ class UserProfileView(viewsets.ViewSet):
                 max_size = 5 * 1024 * 1024  # 5 MB
                 if profile_image.size > max_size:
                     return Response({'detail': 'Image file size is too large.'}, status=status.HTTP_400_BAD_REQUEST)
-
-                # Generate a unique filename based on the user's first name
-                base_filename, file_extension = os.path.splitext(profile_image.name)
-                firstname = user.first_name.lower()
-                candidate = f"{firstname}profileimage{file_extension}"
-                i = 1
-                while user.profile_image.name == candidate:
-                    candidate = f"{firstname}{i}profileimage{file_extension}"
-                    i += 1
 
                 # Read and process the image (e.g., resize it)
                 with Image.open(profile_image) as img:

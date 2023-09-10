@@ -27,7 +27,8 @@ class LeadershipUserSerializer(serializers.ModelSerializer):
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'alternative_email', 'registration_no', 'phone_number', 'year_of_study', 'leadership_role', 'linkedin')
+        fields = ('pk', 'username', 'first_name', 'last_name', 'email', 'alternative_email', 'registration_no', 'phone_number', 'year_of_study', 'leadership_role', 'linkedin')
+
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
