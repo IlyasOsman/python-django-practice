@@ -12,7 +12,7 @@ from .serializers import (
 )
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
-from PIL import Image 
+from PIL import Image
 
 class UserLoginView(TokenObtainPairView):
     username_field = 'email'
@@ -29,7 +29,7 @@ class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserListSerializer
     permission_classes = [IsAuthenticated]
-    
+
 
 class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -38,7 +38,6 @@ class UserDetailView(generics.RetrieveAPIView):
 
 class UserProfileView(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser, FileUploadParser)
 
     def get_object(self):
         return self.request.user
@@ -54,36 +53,6 @@ class UserProfileView(viewsets.ViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            
-            # Handle profile image update separately
-            profile_image = request.data.get('profile_image')
-            if profile_image:
-                # Validate the file format and size
-                if not profile_image.name.endswith(('.jpg', '.jpeg', '.png')):
-                    return Response({'detail': 'Only JPG, JPEG and PNG images are allowed.'}, status=status.HTTP_400_BAD_REQUEST)
-                
-                max_size = 5 * 1024 * 1024  # 5 MB
-                if profile_image.size > max_size:
-                    return Response({'detail': 'Image file size is too large.'}, status=status.HTTP_400_BAD_REQUEST)
-
-                # Read and process the image (e.g., resize it)
-                with Image.open(profile_image) as img:
-                    img.thumbnail((300, 300))  # Resize the image
-
-                    # Create an in-memory file to save the processed image
-                    output = BytesIO()
-                    img.save(output, format='JPEG')
-                    output.seek(0)
-
-                    # Create an InMemoryUploadedFile with the processed data and the unique filename
-                    processed_file = InMemoryUploadedFile(
-                        output, None, candidate, 'image/jpeg', output.tell(), None
-                    )
-
-                # Save the processed image to the user's profile_image field
-                user.profile_image = processed_file
-                user.save()
-
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -106,5 +75,50 @@ class UserProfileView(viewsets.ViewSet):
             user.set_password(new_password)
             user.save()
             return Response({'detail': 'Password successfully changed.'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserProfileImageView(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser, FileUploadParser)
+
+    def get_object(self):
+        return self.request.user
+
+    def update_image(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = UserProfileUpdateSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            # Handle profile image update separately
+            profile_image = request.data.get('profile_image')
+            if profile_image:
+                # Validate the file format and size
+                if not profile_image.name.endswith(('.jpg', '.jpeg', '.png')):
+                    return Response({'detail': 'Only JPG, JPEG and PNG images are allowed.'}, status=status.HTTP_400_BAD_REQUEST)
+
+                max_size = 5 * 1024 * 1024  # 5 MB
+                if profile_image.size > max_size:
+                    return Response({'detail': 'Image file size is too large.'}, status=status.HTTP_400_BAD_REQUEST)
+
+                # Read and process the image (e.g., resize it)
+                with Image.open(profile_image) as img:
+                    img.thumbnail((300, 300))  # Resize the image
+
+                    # Create an in-memory file to save the processed image
+                    output = BytesIO()
+                    img.save(output, format='JPEG')
+                    output.seek(0)
+
+                    # Create an InMemoryUploadedFile with the processed data and the unique filename
+                    processed_file = InMemoryUploadedFile(
+                        output, None, user.profile_image.name, 'image/jpeg', output.tell(), None
+                    )
+
+                # Save the processed image to the user's profile_image field
+                user.profile_image = processed_file
+                user.save()
+
+            return Response({'detail': 'Profile image updated successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

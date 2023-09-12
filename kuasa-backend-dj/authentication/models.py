@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 class User(AbstractUser):
+    username = models.CharField(unique=True, max_length=255)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     email = models.EmailField(unique=True)
@@ -11,7 +12,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15)
     year_of_study = models.IntegerField(null=True, blank=True)
     linkedin = models.URLField(blank=True, null=True, verbose_name="LinkedIn Profile")
-    
+
     LEADERSHIP_CHOICES = (
         ('President', 'President'),
         ('Patron', 'Patron'),
@@ -26,6 +27,9 @@ class User(AbstractUser):
 
     leadership_role = models.CharField(max_length=50, choices=LEADERSHIP_CHOICES, blank=True, null=True)
     profile_image = models.ImageField(upload_to='media/profile_images/', null=True, blank=True)
+    is_member = models.BooleanField(default=False, verbose_name="Is Member")
+    readonly_fields = ['last_login']
+    bio = models.TextField(max_length=120, blank=True, null=True)
 
     def __str__(self):
         return self.username

@@ -22,18 +22,20 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class LeadershipUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'leadership_role', 'linkedin', 'profile_image')
+        fields = ('pk', 'first_name', 'last_name', 'leadership_role', 'linkedin', 'profile_image')
 
 class UserListSerializer(serializers.ModelSerializer):
+    is_member = serializers.ReadOnlyField()
     class Meta:
         model = User
-        fields = ('pk', 'username', 'first_name', 'last_name', 'email', 'alternative_email', 'registration_no', 'phone_number', 'year_of_study', 'leadership_role', 'linkedin')
+        fields = ('pk', 'username', 'first_name', 'last_name', 'email', 'alternative_email', 'registration_no', 'phone_number', 'year_of_study', 'leadership_role', 'linkedin', 'is_member', 'bio')
 
 
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    is_member = serializers.ReadOnlyField()
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'alternative_email', 'registration_no', 'phone_number', 'year_of_study', 'leadership_role', 'linkedin', 'profile_image' )
+        fields = ('username', 'first_name', 'last_name', 'email', 'alternative_email', 'registration_no', 'phone_number', 'year_of_study', 'leadership_role', 'linkedin', 'profile_image', 'is_member', 'bio')
 
     def update(self, instance, validated_data):
         if 'password' in validated_data:
