@@ -7,6 +7,7 @@ class CustomUserAdmin(UserAdmin):
     list_display = (
         "username",
         "email",
+        "is_verified",
         "first_name",
         "last_name",
         "is_staff",
@@ -27,6 +28,7 @@ class CustomUserAdmin(UserAdmin):
                     "first_name",
                     "last_name",
                     "email",
+                    "is_verified",
                     "alternative_email",
                     "linkedin",
                     "registration_no",
@@ -63,6 +65,7 @@ class CustomUserAdmin(UserAdmin):
                 "fields": (
                     "username",
                     "email",
+                    "is_verified",
                     "first_name",
                     "last_name",
                     "password1",

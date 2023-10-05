@@ -32,6 +32,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 
 
+class EmailVerificationSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=555)
+
+    class Meta:
+        model = User
+        fields = ["token"]
+
+
 class LeadershipUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -66,6 +74,7 @@ class UserListSerializer(serializers.ModelSerializer):
             "is_member",
             "is_corporate_member",
             "bio",
+            "is_verified",
         )
 
 
@@ -90,6 +99,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
             "is_member",
             "is_corporate_member",
             "bio",
+            "is_verified",
         )
 
     def update(self, instance, validated_data):

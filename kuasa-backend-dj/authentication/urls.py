@@ -9,6 +9,7 @@ from .views import (
     UserProfileView,
     UserDetailView,
     UserProfileImageView,
+    VerifyEmailView,
 )
 
 
@@ -38,4 +39,5 @@ urlpatterns = [
         UserProfileView.as_view({"post": "change_password"}),
         name="change_password",
     ),
+    path("verify-email/", VerifyEmailView.as_view(), name="verify-email"),
 ]

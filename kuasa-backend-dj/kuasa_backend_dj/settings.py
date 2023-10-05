@@ -49,7 +49,7 @@ ROOT_URLCONF = "kuasa_backend_dj.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -138,3 +138,25 @@ AUTH_USER_MODEL = "authentication.User"
 
 # Static files (CSS, JavaScript, images)
 STATIC_URL = "/static/"
+MEDIA_URL = ""
+MEDIA_ROOT = ""
+
+# Media files (user-uploaded content like images)
+# MEDIA_URL = f"https://kuasamedia.blob.core.windows.net/images/"
+
+# DEFAULT_FILE_STORAGE = "storages.backends.azure_storage.AzureStorage"
+# AZURE_ACCOUNT_NAME =
+# AZURE_ACCOUNT_KEY =
+# AZURE_CONTAINER =
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+# EMAIL_HOST
+EMAIL_PORT = 587
+EMAIL_HOST_USER =
+# EMAIL_HOST_PASSWORD
+
+# DEFAULT_FROM_EMAIL
+
+# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
