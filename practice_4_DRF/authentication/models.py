@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 import uuid
 import os
-from blog.models import Blog
+
+from blogs.models import Blog
 
 
 def profile_image_file_path(instance, filename):
@@ -54,19 +55,10 @@ class User(AbstractUser):
 
     blogs = models.ManyToManyField(
         Blog,
-        related_name="post_authors",
+        related_name="blogs_authors",
         blank=True,
         verbose_name="Blogs Authored",
     )
-
-    def can_submit_blog(self):
-        return self.is_member
-
-    def can_edit_blog(self, blog):
-        return self.is_member and blog in self.blogs.all()
-
-    def can_delete_blog(self, blog):
-        return self.is_member and blog in self.blogs.all()
 
     def __str__(self):
         return self.username

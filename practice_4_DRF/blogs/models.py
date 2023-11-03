@@ -5,22 +5,22 @@ import os
 from django.conf import settings
 
 
-def blog_image_file_path(instance, filename):
+def blogs_image_file_path(instance, filename):
     """Generate file path for new blog image."""
     ext = os.path.splitext(filename)[1]
     filename = f"{uuid.uuid4()}{ext}"
-    return os.path.join("blog", filename)
+    return os.path.join("blogs", filename)
 
 
 class Blog(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(max_length=500)
     cover_image = models.ImageField(
-        upload_to=blog_image_file_path, null=True, blank=True
+        upload_to=blogs_image_file_path, null=True, blank=True
     )
     authors = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name="posted_blogs",
+        related_name="blogs_authored",
         blank=True,
         verbose_name="Authors of the Blog",
     )

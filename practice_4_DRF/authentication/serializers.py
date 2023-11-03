@@ -65,6 +65,7 @@ class LeadershipUserSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     is_member = serializers.ReadOnlyField()
+    blogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -92,10 +93,12 @@ class UserListSerializer(serializers.ModelSerializer):
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     is_member = serializers.ReadOnlyField()
     is_corporate_member = serializers.ReadOnlyField()
+    blogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
         fields = (
+            "pk",
             "username",
             "first_name",
             "last_name",

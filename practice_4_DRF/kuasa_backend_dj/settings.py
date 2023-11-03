@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     "authentication",
     "corsheaders",
     "events",
-    "blog",
+    "blogs",
 ]
 
 MIDDLEWARE = [
