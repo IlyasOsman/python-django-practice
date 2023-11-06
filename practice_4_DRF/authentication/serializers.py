@@ -11,6 +11,7 @@ from django.utils.encoding import (
     DjangoUnicodeDecodeError,
 )
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from blogs.serializers import BlogSerializer
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -65,7 +66,7 @@ class LeadershipUserSerializer(serializers.ModelSerializer):
 
 class UserListSerializer(serializers.ModelSerializer):
     is_member = serializers.ReadOnlyField()
-    blogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    blogs = BlogSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -93,7 +94,7 @@ class UserListSerializer(serializers.ModelSerializer):
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     is_member = serializers.ReadOnlyField()
     is_corporate_member = serializers.ReadOnlyField()
-    blogs = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    blogs = BlogSerializer(many=True, read_only=True)
 
     class Meta:
         model = User

@@ -2,7 +2,7 @@ from django.db import models
 from autoslug import AutoSlugField
 import uuid
 import os
-from django.conf import settings
+from authentication.models import BlogAuthor
 
 
 def blogs_image_file_path(instance, filename):
@@ -19,7 +19,7 @@ class Blog(models.Model):
         upload_to=blogs_image_file_path, null=True, blank=True
     )
     authors = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
+        BlogAuthor,
         related_name="blogs_authored",
         blank=True,
         verbose_name="Authors of the Blog",

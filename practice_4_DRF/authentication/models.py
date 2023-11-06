@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 import uuid
 import os
-
+from django.conf import settings
 from blogs.models import Blog
 
 
@@ -13,6 +13,15 @@ def profile_image_file_path(instance, filename):
     filename = f"{uuid.uuid4()}{ext}"
 
     return os.path.join(filename)
+
+
+class BlogAuthor(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # Remove the ForeignKey to 'Blog' here, and change it to a ManyToMany relationship
+    blogs = models.ManyToManyField(Blog, related_name="authors")
+
+    def __str__(self):
+        return self.user.username
 
 
 class User(AbstractUser):
@@ -52,12 +61,13 @@ class User(AbstractUser):
     is_corporate_member = models.BooleanField(
         default=False, verbose_name="Is Corporate Member"
     )
-
-    blogs = models.ManyToManyField(
-        Blog,
-        related_name="blogs_authors",
+    blogs = models.ForeignKey(
+        BlogAuthor,
+        on_delete=models.SET_NULL,
+        related_name="user_blog_author",
         blank=True,
-        verbose_name="Blogs Authored",
+        null=True,
+        verbose_name="Blog Author",
     )
 
     def __str__(self):

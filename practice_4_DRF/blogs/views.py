@@ -1,7 +1,6 @@
 from rest_framework import generics, permissions
-from .models import Blog
+from .models import Blog, BlogAuthor
 from .serializers import BlogSerializer
-from .permissions import IsBlogAuthor
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -10,11 +9,16 @@ class BlogListCreateView(generics.ListCreateAPIView):
     serializer_class = BlogSerializer
 
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
     def perform_create(self, serializer):
         user = self.request.user
         if user.is_member:
-            serializer.save(authors=[user])
+            blog = serializer.save()
+
+            # Get the BlogAuthor instance for the current user
+            blog_author, created = BlogAuthor.objects.get_or_create(user=user)
+
+            # Add the current user as an author of the blog
+            blog.authors.add(blog_author)
         else:
             raise PermissionDenied("You must be a member to create a blog.")
 

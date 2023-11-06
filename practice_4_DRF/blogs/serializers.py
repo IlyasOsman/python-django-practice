@@ -3,9 +3,10 @@ from .models import Blog
 
 
 class BlogSerializer(serializers.ModelSerializer):
+    authors = serializers.SerializerMethodField()
+
     class Meta:
         model = Blog
-        fields = "__all__"
         fields = (
             "pk",
             "title",
