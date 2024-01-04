@@ -20,7 +20,12 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ("is_staff", "is_superuser", "is_member", "leadership_role")
 
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
+        (
+            None,
+            {
+                "fields": ("username",),
+            },
+        ),
         (
             "Personal Info",
             {
@@ -84,6 +89,11 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.is_superuser and obj is None:
+            return False  # Superuser can't delete multiple objects
+        return super().has_delete_permission(request, obj)
 
 
 admin.site.register(User, CustomUserAdmin)

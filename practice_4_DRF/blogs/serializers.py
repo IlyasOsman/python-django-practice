@@ -1,20 +1,73 @@
 from rest_framework import serializers
-from .models import Blog
+from .models import (
+    Blog,
+    Comment,
+    CommentReply,
+    Upvote,
+    CommentUpvote,
+    CommentReplyUpvote,
+)
+
+
+class CommentUpvoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentUpvote
+        fields = "__all__"
+
+
+class CommentReplyUpvoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentReplyUpvote
+        fields = "__all__"
+
+
+class CommentReplySerializer(serializers.ModelSerializer):
+    upvotes = CommentReplyUpvoteSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = CommentReply
+        fields = "__all__"
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    replies = CommentReplySerializer(many=True, read_only=True)
+    upvotes = CommentUpvoteSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
+
+
+class UpvoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Upvote
+        fields = "__all__"
 
 
 class BlogSerializer(serializers.ModelSerializer):
-    authors = serializers.SerializerMethodField()
+    upvotes = UpvoteSerializer(many=True, read_only=True)
 
     class Meta:
         model = Blog
         fields = (
-            "pk",
+            "id",
             "title",
             "description",
+            "upvotes",
+            "comments",
+            "link",
             "cover_image",
-            "slug",
             "is_project",
             "created_at",
-            "updated_at",
-            "authors",
+            "slug",
+            "author",
         )
+
+
+class BlogDetailSerializer(serializers.ModelSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+    upvotes = UpvoteSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Blog
+        fields = "__all__"
